@@ -9,9 +9,16 @@ import SwiftUI
 
 @main
 struct SampleHealthKitApp: App {
+    
+    @State private var healthController = HealthController()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .task {
+                    self.healthController.requestAuthorization()
+                }
         }
+        .environment(self.healthController)
     }
 }
