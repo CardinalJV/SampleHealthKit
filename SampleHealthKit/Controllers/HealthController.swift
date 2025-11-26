@@ -8,17 +8,16 @@
 import HealthKit
 
 @Observable class HealthController {
-    // Initialisation of HKHealthStore
+    // MARK: - Store property
     @ObservationIgnored private var healthStore: HKHealthStore? = nil
-    // Setting Set of QuantityType
     @ObservationIgnored private var allTypes: Set<HKQuantityType>? = nil
-    // Parameter instance of step data
+    // MARK: - Steps property
     @ObservationIgnored private var stepCountAnchor: HKQueryAnchor? = nil
     var stepCountOfToday: Int = 0
-    // Parameter instance of calories data
+    // MARK: - Calories property
     @ObservationIgnored private var activeEnergyBurnedAnchor: HKQueryAnchor? = nil
     var activeEnergyBurnedOfToday: Int = 0
-    // Init
+    // MARK: - Init
     init() {
         if HKHealthStore.isHealthDataAvailable() {
             self.healthStore = HKHealthStore()
@@ -31,7 +30,7 @@ import HealthKit
             ]
         }
     }
-    // Request authorization
+    // MARK: - Request authorization
     func requestAuthorization() async {
         do {
             if let types = self.allTypes, let store = self.healthStore {
@@ -42,7 +41,7 @@ import HealthKit
             return
         }
     }
-    // Fetch steps
+    // MARK: - Fetch Step Count
     func fetchStepCountOfToday() async {
         /// Define the type of quantity that will be observed
         let type = HKQuantityType(.stepCount)
@@ -50,7 +49,7 @@ import HealthKit
         let predicate = HKQuery.predicateForSamples(withStart: .startOfToday, end: Date.now)
         /// Init anchor object that will observe update
         let descriptor = HKAnchoredObjectQueryDescriptor(predicates: [.quantitySample(type: type, predicate: predicate)], anchor: self.stepCountAnchor)
-        /// Init the query object that will fetch the type
+        /// Init the query object that will fetch the type 
         let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, results, error in
             /// Guard to verify if there are a result and no error
             guard let results = results, error == nil else { return }
