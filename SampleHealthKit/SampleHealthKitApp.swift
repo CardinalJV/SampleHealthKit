@@ -11,14 +11,17 @@ import SwiftUI
 struct SampleHealthKitApp: App {
     
     @State private var healthController = HealthController()
+    @State private var notificationController = NotificationController()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .task {
-                    self.healthController.requestAuthorization()
+                    await healthController.requestAuthorization()
+                    await notificationController.requestAuthorization()
                 }
         }
         .environment(self.healthController)
+        .environment(self.notificationController)
     }
 }
