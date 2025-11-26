@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     
     @Environment(HealthController.self) private var healthController
+    @Environment(NotificationController.self) private var notificationController
     
     var body: some View {
         VStack {
@@ -19,6 +20,11 @@ struct ContentView: View {
 //            if healthController.activeEnergyBurnedOfToday != 0 {
 //                Text("Calories: \(healthController.activeEnergyBurnedOfToday)")
 //            }
+            Button("Request notification") {
+                Task {
+                    await notificationController.launchNotification()
+                }
+            }
         }
         .task {
             await healthController.fetchStepCountOfToday()
