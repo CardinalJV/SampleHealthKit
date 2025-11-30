@@ -18,7 +18,6 @@ struct SampleHealthKitApp: App {
             ContentView()
                 .task {
                     await healthController.requestAuthorization()
-                    await notificationController.requestAuthorization()
                 }
         }
         .environment(self.healthController)
