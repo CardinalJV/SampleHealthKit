@@ -17,18 +17,24 @@ struct ContentView: View {
             if healthController.stepCountOfToday != 0 {
                 Text("Steps: \(healthController.stepCountOfToday)")
             }
-//            if healthController.activeEnergyBurnedOfToday != 0 {
-//                Text("Calories: \(healthController.activeEnergyBurnedOfToday)")
-//            }
-            Button("Request notification") {
+            if healthController.activeEnergyBurnedOfToday != 0 {
+                Text("Calories: \(healthController.activeEnergyBurnedOfToday)")
+            }
+            Button("Launch a notification") {
                 Task {
-                    await notificationController.launchNotification()
+//                    if await notificationController.verifyAuthorizationStatus() {
+//                        await notificationController.badgeInNotification()
+//                        await notificationController.badgeOutNotification() 
+//                    }
+                    if await notificationController.authorizationStatus() == .authorized {
+                        
+                    }
                 }
             }
         }
         .task {
             await healthController.fetchStepCountOfToday()
-//            await healthController.fetchActiveEnergyBurnedOfToday()
+            await healthController.fetchActiveEnergyBurnedOfToday()
         }
     }
 }
