@@ -49,7 +49,7 @@ import HealthKit
         let predicate = HKQuery.predicateForSamples(withStart: .startOfToday, end: Date.now)
         /// Init anchor object that will observe update
         let descriptor = HKAnchoredObjectQueryDescriptor(predicates: [.quantitySample(type: type, predicate: predicate)], anchor: self.stepCountAnchor)
-        /// Init the query object that will fetch the type 
+        /// Init the query object that will fetch the type
         let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, results, error in
             /// Guard to verify if there are a result and no error
             guard let results = results, error == nil else { return }
@@ -75,32 +75,31 @@ import HealthKit
             }
         }
     }
-    /* In progress */
-    //    func fetchActiveEnergyBurnedOfToday() async {
-    //        let type = HKQuantityType(.activeEnergyBurned)
-    //        let predicate = HKQuery.predicateForSamples(withStart: .startOfToday, end: Date.now)
-    //        let descriptor = HKAnchoredObjectQueryDescriptor(predicates: [.quantitySample(type: type, predicate: predicate)], anchor: self.activeEnergyBurnedAnchor)
-    //        let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, results, error in
-    //            guard let results = results, error == nil else {
-    //                return
-    //            }
-    //            if let sum = results.sumQuantity() {
-    //                self.activeEnergyBurnedOfToday = Int(sum.doubleValue(for: .joule()))
-    //            }
-    //        }
-    //
-    //        if let store = self.healthStore {
-    //            store.execute(query)
-    //            do {
-    //                let results = descriptor.results(for: store)
-    //                for try await result in results {
-    //                    self.activeEnergyBurnedAnchor = result.newAnchor
-    //                    store.execute(query)
-    //                }
-    //            } catch {
-    //                print("HealthKit error during fetching calories amount:", error)
-    //            }
-    //        }
-    //    }
-    /* - */
+    // MARK: - Fetch active energy burned
+    func fetchActiveEnergyBurnedOfToday() async {
+        let type = HKQuantityType(.activeEnergyBurned)
+        let predicate = HKQuery.predicateForSamples(withStart: .startOfToday, end: Date.now)
+        let descriptor = HKAnchoredObjectQueryDescriptor(predicates: [.quantitySample(type: type, predicate: predicate)], anchor: self.activeEnergyBurnedAnchor)
+        let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, results, error in
+            guard let results = results, error == nil else {
+                return
+            }
+            if let sum = results.sumQuantity() {
+                self.activeEnergyBurnedOfToday = Int(sum.doubleValue(for: .kilocalorie()))
+            }
+        }
+        
+        if let store = self.healthStore {
+            store.execute(query)
+            do {
+                let results = descriptor.results(for: store)
+                for try await result in results {
+                    self.activeEnergyBurnedAnchor = result.newAnchor
+                    store.execute(query)
+                }
+            } catch {
+                print("HealthKit error during fetching calories amount:", error)
+            }
+        }
+    }
 }
